@@ -75,10 +75,17 @@ process.on('uncaughtException', function(e) {
 var httpserv;
 
 var app = express();
+
 app.get('/wetty/ssh/:user', function(req, res) {
     res.sendfile(__dirname + '/public/wetty/index.html');
 });
-app.use('/', express.static(path.join(__dirname, 'public')));
+
+app.use('/', function (req, res, next) {
+    // CASO QUEIRA PROTEGER O TERMINAL COM AUTENTICAÇÃO
+    // AQUI É O LOCAL ONDE VOCÊ DEVE ADICIONAR O MIDDLEWARE DE AUTENTICAÇÃO.
+      next();
+    }, express.static(path.join(__dirname, 'public'))
+);
 
 if (runhttps) {
     httpserv = https.createServer(opts.ssl, app).listen(opts.port, function() {
