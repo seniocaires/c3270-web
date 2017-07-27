@@ -1,0 +1,22 @@
+#!/bin/sh
+echo "Iniciando Entrypoint ..."
+
+echo "Criando usuario"
+adduser --quiet --disabled-password --shell /bin/bash --home /home/${USUARIO} --gecos "User" ${USUARIO}
+
+echo "Bloqueando profile"
+echo ${USUARIO}":"${SENHA} | chpasswd
+mv /opt/run/.profile /home/${USUARIO}/.profile
+mkdir /home/${USUARIO}/programas
+ln -s /usr/bin/c3270 /home/${USUARIO}/programas/
+echo "/home/"${USUARIO}"/programas/c3270 -once -cbreak -noprompt -secure -reconnect "${HOST}":"${PORTA} >> /home/${USUARIO}/.bashrc
+chattr +i /home/${USUARIO}/.profile
+
+echo "Iniciando Cron"
+cron start
+
+/etc/init.d/ssh start
+node /opt/app/app.js -p 80
+
+# Remover imutabilidade do profile
+#chattr -i /home/${USUARIO}/.profile

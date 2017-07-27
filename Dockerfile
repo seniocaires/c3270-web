@@ -1,0 +1,37 @@
+# ===== Processo de Build =====
+FROM node:6 AS builder
+
+ADD app /builds
+
+WORKDIR /builds
+
+RUN npm install
+
+# ===== Imagem Final =====
+FROM node:6
+
+COPY --from=builder /builds /opt/app
+
+ADD cron/crontab /etc/cron.d/limpar-processos-cron
+ADD cron/limpar-processos.sh /opt/cron/limpar-processos.sh
+ADD run/entrypoint /opt/run/entrypoint
+ADD run/.profile /opt/run/.profile
+
+RUN echo "deb http://ftp.br.debian.org/debian jessie main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y c3270 openssh-server cron sshpass \
+    && cp /bin/bash /bin/blokedbash \
+    && chmod 0644 /etc/cron.d/limpar-processos-cron \
+    && /usr/bin/crontab /etc/cron.d/limpar-processos-cron \
+    && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config \
+    && echo "StrictHostKeyChecking no"  >> /etc/ssh/ssh_config \
+    && chmod -R o-w /tmp \
+    && chmod +x /opt/run/entrypoint
+
+EXPOSE 22 80
+
+WORKDIR /opt/app
+
+CMD ["sh", "/opt/run/cmd"]
+
+ENTRYPOINT ["sh","/opt/run/entrypoint"]

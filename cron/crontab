@@ -1,0 +1,1 @@
+* * * * * root sh /opt/cron/limpar-processos.sh 2>&1
