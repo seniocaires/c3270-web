@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # max time in minutes
-MAXTIME=15
+MAXTIME=10
 
 OLDIFS=$IFS
 IFS='
@@ -21,7 +21,7 @@ for i in `w | sed '1,3d' | awk '{ print $2,$5 }' | sed 's/:.*$//' | sed -e '/^.*
 
 IFS=$OLDIFS
 
-echo "killing:"
+echo $(date)" killing:"
 for ps in $PIDSTOKILL; do
     ps -f -p $ps | sed '1d'
     kill $(echo $ps)
@@ -30,4 +30,3 @@ sleep 1
 for ps in $PIDSTOKILL; do
     kill -9 $(echo $ps)
   done
-

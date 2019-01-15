@@ -16,6 +16,7 @@ RUN echo "deb http://ftp.br.debian.org/debian jessie main contrib non-free" >> /
     && echo "StrictHostKeyChecking no"  >> /etc/ssh/ssh_config \
     && chmod -R o-w /tmp \
     && chmod +x /opt/run/entrypoint \
+    && echo "America/Sao_Paulo" > /etc/timezone && rm /etc/localtime && ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
     && cd /opt/app && npm i
 
 EXPOSE 22 80
