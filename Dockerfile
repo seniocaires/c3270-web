@@ -1,17 +1,6 @@
-# ===== Processo de Build =====
-FROM node:6 AS builder
-
-ADD app /builds
-
-WORKDIR /builds
-
-RUN npm install
-
-# ===== Imagem Final =====
 FROM node:6
 
-COPY --from=builder /builds /opt/app
-
+ADD app /opt/app
 ADD cron/crontab /etc/cron.d/limpar-processos-cron
 ADD cron/limpar-processos.sh /opt/cron/limpar-processos.sh
 ADD run/entrypoint /opt/run/entrypoint
@@ -26,7 +15,8 @@ RUN echo "deb http://ftp.br.debian.org/debian jessie main contrib non-free" >> /
     && echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config \
     && echo "StrictHostKeyChecking no"  >> /etc/ssh/ssh_config \
     && chmod -R o-w /tmp \
-    && chmod +x /opt/run/entrypoint
+    && chmod +x /opt/run/entrypoint \
+    && cd /opt/app && npm i
 
 EXPOSE 22 80
 

@@ -15,7 +15,7 @@ docker pull seniocaires/c3270-web
 ```
 - Para iniciar um container da imagem recém baixada:
 ```shell
-docker run --rm -e USUARIO=usuario -e SENHA=senha -e HOST=host.acesso.com.br -e PORTA=12789 seniocaires/c3270-web
+docker run --rm -e USUARIO=usuario -e SENHA=senha -e HOST=host.acesso.com.br -e PORTA=12789 -e CONTEXTO=/terminal seniocaires/c3270-web
 ```
 
 ### Quais parâmetros são necessários (variáveis de ambiente)?
@@ -23,3 +23,4 @@ docker run --rm -e USUARIO=usuario -e SENHA=senha -e HOST=host.acesso.com.br -e 
  - SENHA : Senha do usuário.
  - HOST : Host que o c3270 irá acessar.
  - PORTA : Porta do Host que o c3270 irá acessar.
+ - CONTEXTO: Context Path da aplicação

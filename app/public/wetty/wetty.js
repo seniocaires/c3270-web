@@ -1,5 +1,8 @@
 var term;
-var socket = io(location.origin, {path: '/wetty/socket.io'})
+var contexto = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 2));
+var contextoSocket = contexto + "/wetty/socket.io";
+console.log(contextoSocket)
+var socket = io(location.origin, { path: contextoSocket })
 var buf = '';
 
 function Wetty(argv) {
@@ -8,7 +11,7 @@ function Wetty(argv) {
     this.pid_ = -1;
 }
 
-Wetty.prototype.run = function() {
+Wetty.prototype.run = function () {
     this.io = this.argv_.io.push();
 
     this.io.onVTKeystroke = this.sendString_.bind(this);
@@ -16,16 +19,16 @@ Wetty.prototype.run = function() {
     this.io.onTerminalResize = this.onTerminalResize.bind(this);
 }
 
-Wetty.prototype.sendString_ = function(str) {
+Wetty.prototype.sendString_ = function (str) {
     socket.emit('input', str);
 };
 
-Wetty.prototype.onTerminalResize = function(col, row) {
+Wetty.prototype.onTerminalResize = function (col, row) {
     socket.emit('resize', { col: col, row: row });
 };
 
-socket.on('connect', function() {
-    lib.init(function() {
+socket.on('connect', function () {
+    lib.init(function () {
         hterm.defaultStorage = new lib.Storage.Local();
         term = new hterm.Terminal();
         window.term = term;
@@ -43,15 +46,14 @@ socket.on('connect', function() {
             row: term.screenSize.height
         });
 
-        if (buf && buf != '')
-        {
+        if (buf && buf != '') {
             term.io.writeUTF16(buf);
             buf = '';
         }
     });
 });
 
-socket.on('output', function(data) {
+socket.on('output', function (data) {
     if (!term) {
         buf += data;
         return;
@@ -59,6 +61,6 @@ socket.on('output', function(data) {
     term.io.writeUTF16(data);
 });
 
-socket.on('disconnect', function() {
+socket.on('disconnect', function () {
     console.log("Socket.io connection closed");
 });

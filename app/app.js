@@ -76,11 +76,11 @@ var httpserv;
 
 var app = express();
 
-app.get('/wetty/ssh/:user', function(req, res) {
+app.get(process.env.CONTEXTO + '/wetty/ssh/:user', function(req, res) {
     res.sendfile(__dirname + '/public/wetty/index.html');
 });
 
-app.use('/', function (req, res, next) {
+app.use(process.env.CONTEXTO, function (req, res, next) {
     // CASO QUEIRA PROTEGER O TERMINAL COM AUTENTICAÇÃO
     // AQUI É O LOCAL ONDE VOCÊ DEVE ADICIONAR O MIDDLEWARE DE AUTENTICAÇÃO.
       next();
@@ -97,13 +97,13 @@ if (runhttps) {
     });
 }
 
-var io = server(httpserv,{path: '/wetty/socket.io'});
+var io = server(httpserv,{path: process.env.CONTEXTO + '/wetty/socket.io'});
 io.on('connection', function(socket){
     var sshuser = '';
     var request = socket.request;
     console.log((new Date()) + ' Connection accepted.');
-    if (match = request.headers.referer.match('/wetty/ssh/.+$')) {
-        sshuser = match[0].replace('/wetty/ssh/', '') + '@';
+    if (match = request.headers.referer.match(process.env.CONTEXTO + '/wetty/ssh/.+$')) {
+        sshuser = match[0].replace(process.env.CONTEXTO + '/wetty/ssh/', '') + '@';
     } else if (globalsshuser) {
         sshuser = globalsshuser + '@';
     }

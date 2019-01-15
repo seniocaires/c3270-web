@@ -8,8 +8,7 @@ IFS='
 '
 
 
-for i in `w | sed '1,3d' | awk '{ print $2,$5 }' | sed 's/:.*$//' | sed -e '/^.*[0-9]s$/d'`;
-  do
+for i in `w | sed '1,3d' | awk '{ print $2,$5 }' | sed 's/:.*$//' | sed -e '/^.*[0-9]s$/d'`; do
     idletime=`echo $i |awk '{ print $2 }'`
 
     if [ $idletime -gt $MAXTIME ];
@@ -23,13 +22,12 @@ for i in `w | sed '1,3d' | awk '{ print $2,$5 }' | sed 's/:.*$//' | sed -e '/^.*
 IFS=$OLDIFS
 
 echo "killing:"
-for ps in $PIDSTOKILL;
-  do
+for ps in $PIDSTOKILL; do
     ps -f -p $ps | sed '1d'
     kill $(echo $ps)
   done
 sleep 1
-for ps in $PIDSTOKILL;
-  do
+for ps in $PIDSTOKILL; do
     kill -9 $(echo $ps)
   done
+
